@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationId>xamarin.posed</ApplicationId>
+    <ApplicationVersion>2</ApplicationVersion>
+    <ApplicationDisplayVersion>2.0</ApplicationDisplayVersion>
+<AfterGenerateAndroidManifest>
+  $(AfterGenerateAndroidManifest);
+  JavaCodePostProcess;
+</AfterGenerateAndroidManifest>
+<PostProcessArgProjectDir>"$(ProjectDir)"</PostProcessArgProjectDir>
+<Authors>UlyssesWu</Authors>
+<RepositoryUrl>https://github.com/UlyssesWu/XamarinPosed.Core</RepositoryUrl>
+<Copyright>wdwxy12345@gmail.com</Copyright>
+<Description>Xposed module using Xamarin &amp; .NET 7 🐱‍💻</Description>
+<PackageTags>xposed;xamarin;</PackageTags>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <DefineConstants>$(DefineConstants);VXP</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);VXP</DefineConstants>
+  </PropertyGroup>
+<Target Name="JavaCodePostProcess">
+	<Exec Command="&quot;$(SolutionDir)JavaCodePostProcessor\bin\$(ConfigurationName)\net7.0\JavaCodePostProcessor.exe&quot; $(ConfigurationName) $(PostProcessArgProjectDir) $(DefineConstants)" ConsoleToMSBuild="true">
+		<Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec" />
+	</Exec>
+</Target>
+  <ItemGroup>
+    <AndroidLibrary Remove="api-82.jar" />
+    <AndroidLibrary Remove="..\XPosedAPI\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidExternalJavaLibrary Include="api-82.jar" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="XPosedAPI">
+      <HintPath>..\ref\Release\net7.0-android\XPosedAPI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
