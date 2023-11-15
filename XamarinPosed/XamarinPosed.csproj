@@ -27,7 +27,7 @@
     <DefineConstants>$(DefineConstants);VXP</DefineConstants>
   </PropertyGroup>
 <Target Name="JavaCodePostProcess">
-	<Exec Command="&quot;$(SolutionDir)JavaCodePostProcessor\bin\$(ConfigurationName)\net7.0\JavaCodePostProcessor.exe&quot; $(ConfigurationName) $(PostProcessArgProjectDir) $(DefineConstants)" ConsoleToMSBuild="true">
+	<Exec Command="&quot;$(SolutionDir)JavaCodePostProcessor\bin\$(ConfigurationName)\net8.0\JavaCodePostProcessor.exe&quot; $(ConfigurationName) $(PostProcessArgProjectDir) $(DefineConstants)" ConsoleToMSBuild="true">
 		<Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec" />
 	</Exec>
 </Target>
