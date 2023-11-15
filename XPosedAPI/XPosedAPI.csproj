@@ -5,11 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
+	<BaseOutputPath>..\ref\</BaseOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AndroidPackageFormat>apk</AndroidPackageFormat>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="del &quot;$(ProjectDir)$(OutDir)XPosedAPI.aar&quot;" ConsoleToMSBuild="true" IgnoreExitCode="true" />
   </Target>
 </Project>
