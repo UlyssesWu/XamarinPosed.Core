@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -12,3 +12,5 @@
 	<Exec Command="del &quot;$(ProjectDir)..\ref\Release\net8.0-android\XPosedAPI.aar&quot;" ConsoleToMSBuild="true" IgnoreExitCode="true" />
 </Target>
 </Project>
+
+<!-- You can only build with VS, not dotnet. There is a bug: https://github.com/xamarin/xamarin-android/issues/8170 -->

@@ -18,7 +18,7 @@ Clone this repo and implement your `InitZygote`, `HandleLoadPackage`, `HandleIni
 
 (`HandleInitPackageResources` is disabled by default. To enable it, remove `VXP` from XaraminPosed Properties - Conditional Compilation Symbols)
 
-Build `XamarinPosed` project with release config. It will be a Xposed module apk. 
+Archive or deploy `XamarinPosed` project with release config. It will be a Xposed module apk. 
 
 ## Hints
 ### How to change xposed module name?

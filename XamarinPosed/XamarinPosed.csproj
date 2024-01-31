@@ -22,9 +22,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <DefineConstants>$(DefineConstants);VXP</DefineConstants>
+    <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);VXP</DefineConstants>
+    <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
 <Target Name="JavaCodePostProcess">
 	<Exec Command="&quot;$(SolutionDir)JavaCodePostProcessor\bin\$(ConfigurationName)\net8.0\JavaCodePostProcessor.exe&quot; $(ConfigurationName) $(PostProcessArgProjectDir) $(DefineConstants)" ConsoleToMSBuild="true">
