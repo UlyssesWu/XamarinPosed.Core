@@ -1,7 +1,9 @@
 # XamarinPosed.Core
-Xposed module using Xamarin & .NET 8 🐱‍💻
+Xposed module using Xamarin & .NET 🐱‍💻
 
-This is the latest version of [XamarinPosed](https://github.com/UlyssesWu/XamarinPosed), with .NET 8 support.
+Current stable branch is [.NET 8](https://github.com/UlyssesWu/XamarinPosed.Core/tree/net8)
+
+For classic Xamarin (Xamarin.Android) version, please check [XamarinPosed](https://github.com/UlyssesWu/XamarinPosed)
 
 ## Limitations
 The app startup time would be slightly longer because of mono initialization. But hey, who cares? Welcome to the **.NET** world.
