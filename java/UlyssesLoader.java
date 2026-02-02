@@ -8,8 +8,7 @@ import java.nio.file.Paths;
 import mono.android.BuildConfig;
 import mono.android.DebugRuntime;
 import mono.android.Runtime;
-import mono.android.app.ApplicationRegistration;
-import mono.android.app.NotifyTimeZoneChanges;
+import net.dot.android.ApplicationRegistration;
 import mono.MonoPackageManager_Resources;
 import android.os.Build;
 import android.os.Environment;
@@ -112,7 +111,7 @@ public class XamarinPosedLoader
                 currentTime = (Calendar.getInstance().get(15) + Calendar.getInstance().get(16)) / 1000;
             }
 			
-			Boolean isSplitApk = false;
+			boolean isSplitApk = false;
 			try
 			{
 				if (BuildConfig.Debug) 
@@ -134,20 +133,16 @@ public class XamarinPosedLoader
 			}
 
 			System.load(nativeLibraryPath3 + "libxamarin-app.so");
-			try 
+			if (!BuildConfig.DotNetRuntime) 
 			{
-				if (!BuildConfig.DotNetRuntime) 
+				try 
 				{
-                   System.load(nativeLibraryPath3 + "libmono-native.so");
-                } 
-				else 
+					System.load(nativeLibraryPath3 + "libmono-native.so");
+				} 
+				catch (UnsatisfiedLinkError e) 
 				{
-					System.load(nativeLibraryPath3 + "libSystem.Security.Cryptography.Native.Android.so");
-                }				
-			} 
-			catch (UnsatisfiedLinkError e) 
-			{
-				Log.i("monodroid", "Failed to preload libmono-native.so (may not exist), ignoring", e);
+					Log.i("monodroid", "Failed to preload libmono-native.so (may not exist), ignoring", e);
+				}
 			}
 
 			System.load(nativeLibraryPath3 + "libmonodroid.so");
@@ -155,7 +150,7 @@ public class XamarinPosedLoader
 			//System.load(nativeLibraryPath3 + "libxa-internal-api.so");
 			Log.i("XamarinPosed", "load lib done");
 			//Runtime.initInternal(localeStr, sourceDirs, nativeLibraryPath2, initParams, classLoader, externalOverrrideParams, MonoPackageManager_Resources.Assemblies, Build.VERSION.SDK_INT, isEmulator());
-			Runtime.initInternal(localeStr, sourceDirs, nativeLibraryPath2, initParams, currentTime, classLoader, MonoPackageManager_Resources.Assemblies, Build.VERSION.SDK_INT, isEmulator(), isSplitApk);
+			Runtime.initInternal(localeStr, sourceDirs, nativeLibraryPath2, initParams, currentTime, classLoader, MonoPackageManager_Resources.Assemblies, isEmulator(), isSplitApk);
 			ApplicationRegistration.registerApplications();
 			Log.i("XamarinPosed", "init internal done");
 			

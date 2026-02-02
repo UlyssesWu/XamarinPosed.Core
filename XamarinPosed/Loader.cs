@@ -96,9 +96,9 @@ namespace XamarinPosed
                     return;
                 }
 
-                if (param.PackageName.ToLowerInvariant() == "xamarin.posed.demo")
+                if (param.PackageName.ToLowerInvariant() == "com.companyname.NetAndroidApp")
                 {
-                    var unhook = XposedHelpers.FindAndHookMethod("xamarin.posed.Main_MySnackBarClickListener", param.ClassLoader, "onClick", "android.view.View", new SelfDemoHook());
+                    var unhook = XposedHelpers.FindAndHookMethod("com.companyname.NetAndroidMainActivity_MySnackBarClickListener", param.ClassLoader, "onClick", "android.view.View", new SelfDemoHook());
                     isThisAppHooked = true;
                 }
             }
