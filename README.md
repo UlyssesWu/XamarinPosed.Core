@@ -1,5 +1,5 @@
 # XamarinPosed.Core
-Xposed module using Xamarin & .NET 🐱‍💻
+Xposed module using Xamarin & .NET 🐱‍💻 | 使用.NET Android （Xamarin Android）实现Xposed模块。
 
 Current stable branch is [.NET 8](https://github.com/UlyssesWu/XamarinPosed.Core/tree/net8)
 
@@ -37,11 +37,13 @@ XamarinPosed Project Properties - Build - Conditional Compilation Symbols - remo
 
 ## License
 
-XamarinPosed.Core is licensed under **MIT** license.
+XamarinPosed.Core is licensed under the MIT License.
+
+Please retain the LICENSE file or include the following attribution in your repository and distributions:
+
+> XamarinPosed.Core - by Ulysses (wdwxy12345{at}gmail.com). Licensed under the MIT License.
 
 # XamarinPosed.Core 中文说明
-
-使用.NET Android （Xamarin Android）实现Xposed模块。🐱‍💻
 
 当前稳定分支为[.NET 8](https://github.com/UlyssesWu/XamarinPosed.Core/tree/net8)分支。.NET 10可用但有一定限制。
 
@@ -79,7 +81,7 @@ App启动时间会稍微变长，因为.NET/mono启动需要一点时间。
 ## 开源协议
 MIT。请在您的公开发布二进制或仓库中保留本项目的`LICENSE`或标注以下文本：
 
-`XamarinPosed.Core by Ulysses (wdwxy12345{at}gmail.com). License: MIT`
+> XamarinPosed.Core - by Ulysses (wdwxy12345{at}gmail.com). Licensed under the MIT License.
 
 ------
 
