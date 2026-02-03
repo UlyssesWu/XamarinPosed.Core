@@ -1,15 +1,17 @@
-﻿using Android.Util;
+using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using DE.Robv.Android.Xposed;
 using DE.Robv.Android.Xposed.Callbacks;
 
 namespace XamarinPosed
 {
-    public partial class Main
+     public partial class Main
     {
         /// <summary>
         /// Write your logic here
         /// </summary>
+        [Register("xamarin/posed/Main_Loader")]
         public class Loader : Java.Lang.Object, IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitPackageResources
         {
             public string BaseApkPath;
@@ -18,8 +20,10 @@ namespace XamarinPosed
 
             public Loader()
             {
-                XposedBridge.Log("XamarinPosed Core Loader created.");
+                Log.Info("XamarinPosed", "XamarinPosed Core Loader created.");
             }
+
+            public Loader(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer) { }
 
             public Loader(string baseApkPath, string packageName)
             {
@@ -33,9 +37,8 @@ namespace XamarinPosed
             /// <param name="param"></param>
             public void HandleLoadPackage(XC_LoadPackage.LoadPackageParam? param)
             {
-                DetectAndFixXamarinApp(param); //This is required for Xamarin app compatibility
+                DetectAndFixXamarinApp(param);
                 Log.Info("XamarinPosed", "XamarinPosed HandleLoadPackage: " + param.PackageName);
-                XposedBridge.Log("XamarinPosed HandleLoadPackage: " + param.PackageName);
                 //This is a demo, remove it
                 HookMyself(param);
             }
@@ -46,7 +49,7 @@ namespace XamarinPosed
             /// <param name="param"></param>
             public void InitZygote(IXposedHookZygoteInit.StartupParam? param)
             {
-                XposedBridge.Log("XamarinPosed InitZygote: " + param?.ModulePath);
+                Log.Info("XamarinPosed", "XamarinPosed InitZygote: " + param?.ModulePath);
             }
 
             /// <summary>
@@ -55,7 +58,7 @@ namespace XamarinPosed
             /// <param name="param"></param>
             public void HandleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam? param)
             {
-                XposedBridge.Log("XamarinPosed HandleInitPackageResources: " + param?.PackageName);
+                Log.Info("XamarinPosed", "XamarinPosed HandleInitPackageResources: " + param?.PackageName);
             }
 
             private bool DetectAndFixXamarinApp(XC_LoadPackage.LoadPackageParam param)
@@ -63,7 +66,7 @@ namespace XamarinPosed
                 var nativeDir = param.AppInfo?.NativeLibraryDir;
                 if (nativeDir == null)
                 {
-                    XposedBridge.Log("native dir is null");
+                    Log.Info("XamarinPosed", "native dir is null");
                     IsXamarinApp = false;
                     return false;
                 }
@@ -73,7 +76,7 @@ namespace XamarinPosed
                     var lib = Path.GetFileName(file);
                     if (lib == "libxamarin-app.so" || lib == "libmono-native.so" || lib == "libmonodroid.so" || lib == "libxamarin-debug-app-helper.so")
                     {
-                        XposedBridge.Log("XamarinPosed found Xamarin App: " + param.PackageName);
+                        Log.Info("XamarinPosed", "XamarinPosed found Xamarin App: " + param.PackageName);
                         //TODO:
                         //var unhook = XposedHelpers.FindAndHookMethod("android.content.Context", param.ClassLoader, "getClassLoader",
                         //    new Context_GetClassLoaderHook());
@@ -91,15 +94,18 @@ namespace XamarinPosed
 
             private void HookMyself(XC_LoadPackage.LoadPackageParam param)
             {
+                Log.Debug("XamarinPosed", $"LoadPackageParam: {param.PackageName}, {param.ProcessName}, {param.AppInfo}, {param.ClassLoader}");
                 if (isThisAppHooked)
                 {
                     return;
                 }
-
-                if (param.PackageName.ToLowerInvariant() == "com.companyname.NetAndroidApp")
+                
+                if (param.PackageName.Equals("com.companyname.NetAndroidApp", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var unhook = XposedHelpers.FindAndHookMethod("com.companyname.NetAndroidMainActivity_MySnackBarClickListener", param.ClassLoader, "onClick", "android.view.View", new SelfDemoHook());
+                    Log.Info("XamarinPosed", "XamarinPosed HookMyself: " + param.PackageName);
+                    var unhook = XposedHelpers.FindAndHookMethod("crc647b8f161eb0a155af.MainActivity_MySnackBarClickListener", param.ClassLoader, "onClick", "android.view.View", new SelfDemoHook());
                     isThisAppHooked = true;
+                    Log.Info("XamarinPosed", "XamarinPosed HookMyself done");
                 }
             }
 
