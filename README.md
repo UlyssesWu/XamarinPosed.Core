@@ -39,7 +39,7 @@ XamarinPosed Project Properties - Build - Conditional Compilation Symbols - remo
 
 XamarinPosed.Core is licensed under **MIT** license.
 
-# 中文说明
+# XamarinPosed.Core 中文说明
 
 使用.NET Android （Xamarin Android）实现Xposed模块。🐱‍💻
 
@@ -65,6 +65,7 @@ App启动时间会稍微变长，因为.NET/mono启动需要一点时间。
 
 以Release配置Archive（某些地方翻译成“存档”） XamarinPosed 项目。产物即为Xposed模块apk。
 
+如果提示缺少Android SDK，请自行安装36.0版本（可通过Android Studio的SDK Manager安装）。如果提示缺少Java SDK也请自行安装。
 
 ## 常见问题
 ### 如何修改模块名称？
