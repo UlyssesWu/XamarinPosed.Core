@@ -27,6 +27,8 @@ public class XamarinPosedLoader
 /** @hide */
 	public xamarin.posed.Main_Loader _loader;
 	public boolean isInited = false;
+	private boolean isZygoteInited = false;
+	private String modulePath;
 	static {}
 
 	public XamarinPosedLoader ()
@@ -36,6 +38,16 @@ public class XamarinPosedLoader
 
 	public void handleLoadPackage (de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam p0)
 	{
+		if (!isInited)
+		{
+			if (shouldSkipProcess(p0.processName))
+			{
+				Log.i("XamarinPosed", "Skip runtime init in process: " + p0.processName);
+				return;
+			}
+			ensureRuntimeInitialized();
+		}
+
 		if (isInited && _loader != null)
 		{
 			_loader.handleLoadPackage(p0);
@@ -44,9 +56,26 @@ public class XamarinPosedLoader
 
 	public void initZygote (de.robv.android.xposed.IXposedHookZygoteInit.StartupParam p0)
 	{
+		modulePath = p0.modulePath;
+		Log.i("XamarinPosed", "InitZygote modulePath: " + modulePath);
+		//ensureRuntimeInitialized();
+	}
+
+	private void ensureRuntimeInitialized()
+	{
+		if (isInited)
+		{
+			return;
+		}
+		if (modulePath == null || modulePath.isEmpty())
+		{
+			Log.e("XamarinPosed", "Module path is not set, skip runtime init.");
+			return;
+		}
+
 		if (!isInited)
 		{
-			String modulePath = p0.modulePath; // /data/user/0/io.va.exposed/virtual/data/app/{package}/base.apk
+			String modulePath = this.modulePath; // /data/user/0/io.va.exposed/virtual/data/app/{package}/base.apk
 			Locale locale = Locale.getDefault();
 			String localeStr = locale.getLanguage() + "-" + locale.getCountry();
 
@@ -70,19 +99,10 @@ public class XamarinPosedLoader
 
 			String cacheDir = cachesDirFile.getAbsolutePath();
 			//String cacheDir = context.getCacheDir().getAbsolutePath(); // filesDir + "cache"
-			String dataAppDir = modulePath.substring(0, modulePath.lastIndexOf("/"));
-			String nativeLibraryPath = dataAppDir + "/lib"; // getNativeLibraryPath(context);
-			//tring nativeLibraryPath = getNativeLibraryPath(context); //{baseApkDir}/../lib
-			
-			File nativeLibraryPathFile = new File(nativeLibraryPath);			
-			for (File f : nativeLibraryPathFile.listFiles())
-			{
-				if(f.isDirectory())
-				{
-					nativeLibraryPath = f.getAbsolutePath();
-					break;
-				}
-			}
+			String abi = Build.SUPPORTED_ABIS != null && Build.SUPPORTED_ABIS.length > 0
+				? Build.SUPPORTED_ABIS[0]
+				: "arm64-v8a";
+			String nativeLibraryPath = modulePath + "!/lib/" + abi;
 
 			ClassLoader classLoader = this.getClass().getClassLoader();
 			//TODO: hook context.getClassLoader() and replaced to this classLoader
@@ -90,7 +110,7 @@ public class XamarinPosedLoader
 			String externalOverrridePath = new File(externalStorageDirectory, "Android/data/" + packageName + "/files/.__override__").getAbsolutePath();
 			String externalOverrridePathLegacy = new File(externalStorageDirectory, "../legacy/Android/data/" + packageName + "/files/.__override__").getAbsolutePath();
 
-			String nativeLibraryPath2 = nativeLibraryPath; //getNativeLibraryPath(applicationInfo);
+			String nativeLibraryPath2 = nativeLibraryPath; // apk!/lib/<abi>
 
 			String[] sourceDirs = new String[1]; //append ApplicationInfo.splitPublicSourceDirs if needed
 			sourceDirs[0] = modulePath;
@@ -146,8 +166,7 @@ public class XamarinPosedLoader
 			}
 
 			System.load(nativeLibraryPath3 + "libmonodroid.so");
-			//System.load(nativeLibraryPath3 + "libmono-btls-shared.so");
-			//System.load(nativeLibraryPath3 + "libxa-internal-api.so");
+			System.load(nativeLibraryPath3 + "libSystem.Security.Cryptography.Native.Android.so");
 			Log.i("XamarinPosed", "load lib done");
 			//Runtime.initInternal(localeStr, sourceDirs, nativeLibraryPath2, initParams, classLoader, externalOverrrideParams, MonoPackageManager_Resources.Assemblies, Build.VERSION.SDK_INT, isEmulator());
 			Runtime.initInternal(localeStr, sourceDirs, nativeLibraryPath2, initParams, currentTime, classLoader, MonoPackageManager_Resources.Assemblies, isEmulator(), isSplitApk);
@@ -158,11 +177,7 @@ public class XamarinPosedLoader
 			_loader = new xamarin.posed.Main_Loader();
 			//_loader = new xamarin.posed.Main_Loader(modulePath, packageName);
 			isInited = true;
-		}
-
-		if (isInited && _loader != null)
-		{
-			_loader.initZygote (p0);
+			simulateInitZygote();
 		}
 	}
 
@@ -178,4 +193,35 @@ public class XamarinPosedLoader
         String str = Build.HARDWARE;
         return str.contains("ranchu") || str.contains("goldfish");
     }
+
+	private static boolean shouldSkipProcess(String processName)
+	{
+		if (processName == null || processName.isEmpty())
+		{
+			return false;
+		}
+		return processName.startsWith("usap") || processName.startsWith("zygote");
+	}
+
+	private void simulateInitZygote()
+	{
+		if (isZygoteInited || _loader == null)
+		{
+			return;
+		}
+		try
+		{
+			de.robv.android.xposed.IXposedHookZygoteInit.StartupParam param =
+				new de.robv.android.xposed.IXposedHookZygoteInit.StartupParam();
+			param.modulePath = modulePath;
+			param.startsSystemServer = false;
+			_loader.initZygote(param);
+			isZygoteInited = true;
+			Log.i("XamarinPosed", "Simulated initZygote invoked.");
+		}
+		catch (Throwable t)
+		{
+			Log.e("XamarinPosed", "Simulated initZygote failed.", t);
+		}
+	}
 }

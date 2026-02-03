@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-android</TargetFramework>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
@@ -8,6 +8,7 @@
     <ApplicationId>xamarin.posed</ApplicationId>
     <ApplicationVersion>2</ApplicationVersion>
     <ApplicationDisplayVersion>2.0</ApplicationDisplayVersion>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
 <AfterGenerateAndroidManifest>
   $(AfterGenerateAndroidManifest);
   JavaCodePostProcess;
@@ -23,10 +24,13 @@
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <DefineConstants>$(DefineConstants);VXP</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
+    <RunAOTCompilation>False</RunAOTCompilation>
+    <PublishTrimmed>True</PublishTrimmed>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);VXP</DefineConstants>
     <IsAotCompatible>True</IsAotCompatible>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
 <Target Name="JavaCodePostProcess">
 	<Exec Command="&quot;$(SolutionDir)JavaCodePostProcessor\bin\$(ConfigurationName)\net8.0\JavaCodePostProcessor.exe&quot; $(ConfigurationName) $(PostProcessArgProjectDir) $(DefineConstants)" ConsoleToMSBuild="true">
@@ -42,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
+    <Folder Include="libs\" />
   </ItemGroup>
     <ItemGroup>
 	    <Reference Include="XPosedAPI">
