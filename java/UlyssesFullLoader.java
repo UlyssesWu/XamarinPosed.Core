@@ -211,7 +211,12 @@ public class XamarinPosedLoader
 		try
 		{
 			de.robv.android.xposed.IXposedHookZygoteInit.StartupParam param =
-				new de.robv.android.xposed.IXposedHookZygoteInit.StartupParam();
+				createStartupParam();
+			if (param == null)
+			{
+				Log.e("XamarinPosed", "Simulated initZygote failed to create StartupParam.");
+				return;
+			}
 			param.modulePath = modulePath;
 			param.startsSystemServer = false;
 			_loader.initZygote(param);
@@ -221,6 +226,22 @@ public class XamarinPosedLoader
 		catch (Throwable t)
 		{
 			Log.e("XamarinPosed", "Simulated initZygote failed.", t);
+		}
+	}
+
+	private static de.robv.android.xposed.IXposedHookZygoteInit.StartupParam createStartupParam()
+	{
+		try
+		{
+			Class<?> clazz = de.robv.android.xposed.IXposedHookZygoteInit.StartupParam.class;
+			java.lang.reflect.Constructor<?> ctor = clazz.getDeclaredConstructor();
+			ctor.setAccessible(true);
+			return (de.robv.android.xposed.IXposedHookZygoteInit.StartupParam) ctor.newInstance();
+		}
+		catch (Throwable t)
+		{
+			Log.e("XamarinPosed", "Failed to create StartupParam via reflection.", t);
+			return null;
 		}
 	}
 }
